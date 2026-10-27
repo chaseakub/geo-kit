@@ -1,0 +1,37 @@
+{
+  "name": "geo-kit",
+  "version": "0.1.0",
+  "description": "Make a static site readable by answer engines (markdown copies, llms.txt, ai.txt, an MCP server), then measure whether they name you.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Chase Kubala",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaseakub/geo-kit.git"
+  },
+  "keywords": ["geo", "generative engine optimization", "llms.txt", "ai.txt", "mcp", "markdown", "seo", "vercel"],
+  "bin": {
+    "geo-kit": "bin/geo-kit.mjs"
+  },
+  "exports": {
+    ".": "./src/build.mjs",
+    "./build": "./src/build.mjs",
+    "./convert": "./src/convert.mjs",
+    "./negotiate": "./src/negotiate.mjs",
+    "./middleware": "./src/middleware.mjs",
+    "./mcp": "./src/mcp.mjs",
+    "./vercel-mcp": "./src/vercel-mcp.mjs",
+    "./audit": "./src/audit.mjs"
+  },
+  "files": ["bin", "src", "templates", "examples"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.3.0",
+    "turndown": "^7.2.4"
+  }
+}

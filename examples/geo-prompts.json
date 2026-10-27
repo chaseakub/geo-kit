@@ -1,0 +1,10 @@
+[
+  { "id": "P01", "topic": "category", "text": "What is the best invoicing software for freelancers?" },
+  { "id": "P02", "topic": "category", "text": "Best invoicing app for a small design agency in 2026" },
+  { "id": "P03", "topic": "job-to-be-done", "text": "How do I get clients to pay invoices on time without chasing them?" },
+  { "id": "P04", "topic": "job-to-be-done", "text": "What tool sends automatic payment reminders for overdue invoices?" },
+  { "id": "P05", "topic": "comparison", "text": "Rival vs Other Rival for freelance invoicing: which is better?" },
+  { "id": "P06", "topic": "alternatives", "text": "Cheaper alternatives to Rival for invoicing" },
+  { "id": "P07", "topic": "pricing", "text": "How much does invoicing software cost per month for one person?" },
+  { "id": "P08", "topic": "brand", "text": "Is Example a good invoicing tool?" }
+]
