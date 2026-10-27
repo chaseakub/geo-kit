@@ -34,6 +34,17 @@ test('readAnswer joins text and separates cited from searched URLs', () => {
   assert.deepEqual(answer, { text: 'Try Rival or Example.', cited: ['https://list.com/best'], searched: ['https://list.com/best', 'https://rival.com/'] })
 })
 
+test('readAnswer takes cited URLs from the SOURCES list and keeps it out of the text', () => {
+  const answer = readAnswer([
+    { type: 'thinking', thinking: '' },
+    { type: 'text', text: 'Rival is popular ([review](https://reviews.org/rival)).\n\n**SOURCES:**\n- https://list.com/best.\nhttps://other.com/a' },
+  ])
+  assert.equal(answer.text, 'Rival is popular ([review](https://reviews.org/rival)).')
+  assert.deepEqual(answer.cited, ['https://list.com/best', 'https://other.com/a', 'https://reviews.org/rival'])
+  const s = scoreAnswer({ text: readAnswer([{ type: 'text', text: 'Rival.\n\nSOURCES\nhttps://example.com/' }]).text, cited: [] }, brands)
+  assert.deepEqual(s.mentions, ['Rival'], 'a domain in SOURCES is not a mention')
+})
+
 test('mentions are whole-word, alias-aware and ordered', () => {
   assert.equal(firstMention('Examples abound', brands[0]), -1)
   assert.equal(firstMention('I like example app.', brands[0]), 7)

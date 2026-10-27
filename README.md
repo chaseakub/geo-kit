@@ -118,7 +118,7 @@ pbpaste | npx geo-kit audit add --engine chatgpt --id P01 --source https://cited
 - **Repeat stability:** answers change run to run. One run is an anecdote; three is a pattern.
 - **Where engines looked when they left you out:** the domains and pages cited in answers that skipped you. This is your outreach list.
 
-Mentions are matched by name and alias, citations by domain. No model grades another model, so every number traces back to a line in `results.jsonl`.
+Mentions are matched by name and alias, citations by domain. Each answer ends with a SOURCES list the run asks for; those URLs are what counts as cited, and the list is removed before mentions are counted. No model grades another model, so every number traces back to a line in `results.jsonl`.
 
 ### What we learned running this
 

@@ -19,7 +19,8 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import { join } from 'node:path'
 
 export const DEFAULT_MODEL = 'claude-opus-5-5'
-const SYSTEM = 'You are a helpful assistant chatting with a member of the public. Search the web when current information would help. Answer naturally.'
+const SYSTEM = 'You are a helpful assistant chatting with a member of the public. Search the web when current information would help. Answer naturally. ' +
+  'After your answer, add a final section headed SOURCES that lists every URL you relied on, one per line.'
 const MAX_CONTINUES = 4
 
 // ---------------------------------------------------------------- inputs
@@ -55,22 +56,33 @@ export function brandsFrom(audit) {
 
 // ---------------------------------------------------------------- run
 
+const URL_RE = /https?:\/\/[^\s<>()[\]"'`]+/g
+const SOURCES_RE = /\n[#*\s]*SOURCES[*:\s]*\n([\s\S]*)$/i
+
 // Answer text and the URLs behind it from one Messages API response.
-// "cited" = URLs the answer attributes a sentence to; "searched" = every
-// result the web search returned.
+// "cited" = URLs the answer relied on: its SOURCES list, links in the answer
+// and any citation blocks. With dynamic filtering the model reads search
+// results inside code execution, so text blocks usually carry no citations
+// and the SOURCES list is the reliable record. "searched" = every result the
+// web search returned. The SOURCES list is cut from the text so a domain in
+// it is never scored as the answer naming that brand.
 export function readAnswer(content) {
-  const text = []
+  const parts = []
   const cited = new Set()
   const searched = new Set()
   for (const block of content) {
     if (block.type === 'text') {
-      text.push(block.text)
+      parts.push(block.text)
       for (const c of block.citations ?? []) if (c.url) cited.add(c.url)
     } else if (block.type === 'web_search_tool_result' && Array.isArray(block.content)) {
       for (const r of block.content) if (r.type === 'web_search_result' && r.url) searched.add(r.url)
     }
   }
-  return { text: text.join('').trim(), cited: [...cited], searched: [...searched] }
+  let text = parts.join('').trim()
+  const sources = text.match(SOURCES_RE)
+  if (sources) text = text.slice(0, sources.index).trim()
+  for (const u of [...(sources?.[1].match(URL_RE) ?? []), ...(text.match(URL_RE) ?? [])]) cited.add(u.replace(/[.,;:]+$/, ''))
+  return { text, cited: [...cited], searched: [...searched] }
 }
 
 async function ask(client, { model, text, maxSearches }) {
